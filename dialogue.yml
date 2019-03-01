@@ -1,0 +1,42 @@
+# This file contains the text of all the comments the Rivet issue bot makes.
+# The {{user}} token is populated by the webhook handler functions to @mention
+# the appropriate person in an issue comment thread.
+
+# /webhooks/issues.labeled/add-on-candidate
+addOnCandidate: "@{{user}} Sorry, but I'm closing this issue because the Rivet team has decided the feature you're requesting wouldn't be a good fit for Rivet core.\n\nHowever, we encourage you to create a Rivet add-on for this specific use case — if you do, we're happy to [feature it on the Rivet website](https://rivet.iu.edu/add-ons/).\n\nYou can learn more about [creating add-ons](https://github.com/indiana-university/rivet-source/wiki/Add-ons) on the Rivet wiki.\n\nThanks!"
+
+# /webhooks/issues.labeled/as-designed
+asDesigned: "@{{user}} Sorry, but I'm closing this bug report because the reported problem is in fact Rivet working as intended.\n\nIf you feel this behavior should change in some way, we encourage you to let us know by [submitting a feature request](https://github.com/indiana-university/rivet-source/wiki/Feature-requests).\n\nThanks!"
+
+# /webhooks/issues.labeled/bug
+bug: "@{{user}} A member of the Rivet team has verified your bug report. Thanks for catching this issue! :fist_right: :fist_left:\n\nFixing this bug will be made a top priority during our next development cycle.\n\nYou can learn more about [our process for fixing bugs](https://github.com/indiana-university/rivet-source/wiki/Development-process) on the Rivet wiki."
+
+# /webhooks/issues.labeled/discussion
+discussion: "@{{user}} Thanks for submitting your feature request!\n\nWe've tagged your request with the `discussion` label because we'd like to chat a little more about your idea before we consider it for Rivet core.\n\nIf you've got any additional links to research, demos, or examples you'd like to share, please do — this all helps us evaulate your feature request.\n\nYou can learn more about [how we handle feature requests and discussions](https://github.com/indiana-university/rivet-source/wiki/Feature-requests) on the Rivet wiki."
+
+# /webhooks/issues.labeled/duplicate
+duplicate: "@{{user}} Sorry, but I'm closing this issue because it's a duplicate of another issue that's already open. I invite you to share your thoughts, reactions, and use cases on the other issue's comment thread.\n\nYou can learn more about [our issue tracking process](https://github.com/indiana-university/rivet-source/wiki/Issue-tracking) on the Rivet wiki.\n\nThanks!"
+
+# /webhooks/issues.opened/empty-body
+emptyBody: "@{{user}} Thanks for opening this issue! We appreciate you helping make Rivet better. A member of the Rivet team will take a look at this issue shortly.\n\nIn the meantime, if you'd be willing to elaborate on your bug report or feature request a little bit, that would really help the Rivet team assess your issue. Links, screenshots, error messages — all great information that can give the Rivet team a hand. :smile:"
+
+# /webhooks/issues.labeled/havent-forgotten
+haventForgotten: "@{{user}} I wanted to check in and let you know that we haven't forgotten about this issue. It's something we know needs to be worked on, but we've been unable to prioritize it these last few cycles. We're also not sure when we'll be able to circle back to it.\n\nHowever, we would definitely welcome a pull request if you wanted to try your hand at an implementation and not wait for us to get around to it. You can learn more about [opening pull requests](https://github.com/indiana-university/rivet-source/wiki/Pull-requests) on the Rivet wiki.\n\nThanks again, and sorry!"
+
+# /webhooks/issues.labeled/not-enough-info
+notEnoughInfo: "@{{user}} Sorry, but I'm closing this issue because the Rivet team wasn't able to get more information about it. If you've got some more details for the Rivet team, go ahead and reopen this issue to share them and we'll take a look.\n\nYou can learn more about [our issue tracking process](https://github.com/indiana-university/rivet-source/wiki/Issue-tracking) on the Rivet wiki.\n\nThanks!"
+
+# /webhooks/issues.labeled/not-reproducible
+notReproducible: "@{{user}} Sorry, but I'm closing this bug report because the Rivet team wasn't able to reproduce the problem. If you've got some more details for the Rivet team, go ahead and reopen this issue to share them and we'll take a look.\n\nYou can learn more about [our issue tracking process](https://github.com/indiana-university/rivet-source/wiki/Issue-tracking) on the Rivet wiki.\n\nThanks!"
+
+# /webhooks/issues.labeled/out-of-scope
+outOfScope: "@{{user}} Sorry, but I'm closing this issue because the Rivet team has decided that this request falls outside the purpose of Rivet, its [roadmap](https://rivet.iu.edu/components/information/roadmap/), or isn't implementable in the near future.\n\nHowever, we encourage you to create a Rivet add-on for this specific use case if it would add needed functionality to your app. You can learn more about [creating add-ons](https://github.com/indiana-university/rivet-source/wiki/Add-ons) on the Rivet wiki.\n\nThanks!"
+
+# /webhooks/issues.labeled/question
+question: "@{{user}} Sorry, but I'm closing this issue because it's a question or comment, and GitHub issues are reserved for bug reports and feature requests.\n\nWe ask that you reach out to us with your question or comment through one of our [feedback channels](https://github.com/indiana-university/rivet-source/wiki/Feedback-channels).\n\nThanks!"
+
+# /webhooks/issues.labeled/request
+request: "@{{user}} A member of the Rivet team has approved your feature request. Thanks for your great idea! :fist_right: :fist_left:\n\nAt the end of each month, we ask the Rivet community to vote on the [list of feature requests in the backlog](https://github.com/indiana-university/rivet-source/issues?q=is%3Aissue+is%3Aopen+label%3Arequest+sort%3Areactions-%2B1-desc) — these votes help determine what requests we prioritize. Your feature request is now on that list!\n\nYou can learn more about [our process for implementing feature requests](https://github.com/indiana-university/rivet-source/wiki/Development-process) on the Rivet wiki."
+
+# /webhooks/issues.opened/thanks
+thanks: "@{{user}} Thanks for opening this issue! We appreciate you helping make Rivet better. :raised_hands:\n\nA member of the Rivet team will take a look at this issue shortly. In the meantime, check out the [Rivet wiki](https://github.com/indiana-university/rivet-source/wiki) to learn more about our project management, issue tracking, and development processes."
