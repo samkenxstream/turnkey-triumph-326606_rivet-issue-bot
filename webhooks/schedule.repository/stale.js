@@ -45,7 +45,7 @@ function getDatestamp30DaysAgo() {
 module.exports = async context => {
   const staleIssues = await fetchStaleIssues(context)
 
-  return staleIssues.items.map(issue => ({
+  return staleIssues.data.items.map(issue => ({
     title: issue.title,
     url: issue.url
   }))

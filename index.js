@@ -19,6 +19,7 @@ const postNotReproducibleCommentAndClose = require('./webhooks/issues.labeled/no
 const postOutOfScopeCommentAndClose = require('./webhooks/issues.labeled/out-of-scope')
 const postNoQuestionsCommentAndClose = require('./webhooks/issues.labeled/question')
 const postAcceptedFeatureRequestComment = require('./webhooks/issues.labeled/request')
+const fetchStaleIssues = require('./webhooks/schedule.repository/stale')
 
 module.exports = app => {
 
@@ -84,14 +85,16 @@ module.exports = app => {
   })
 
   /***************************************************************************
-   * Scheduled bot tasks that run every day.
+   * Scheduled bot tasks that run every week.
    **************************************************************************/
 
    createScheduler(app, {
-     interval: 24 * 60 * 60 * 1000 // 1 day
+     interval: 7 * 24 * 60 * 60 * 1000
    })
 
    app.on('schedule.repository', async context => {
+    const staleIssues = await fetchStaleIssues(context)
     
+    console.log(staleIssues)
    })
 }
