@@ -6,7 +6,6 @@
 const yaml = require('read-yaml')
 const dialogue = yaml.sync('dialogue.yml')
 const createScheduler = require('probot-scheduler')
-const sendmail = require('sendmail')();
 const postThankYouComment = require('./webhooks/issues.opened/thanks')
 const postThanksButNeedMoreInfoComment = require('./webhooks/issues.opened/empty-body')
 const postAddOnCandidateCommentAndClose = require('./webhooks/issues.labeled/add-on-candidate')
@@ -89,13 +88,13 @@ module.exports = app => {
    * Scheduled bot tasks that run every week.
    **************************************************************************/
 
-   createScheduler(app, {
-     interval: 7 * 24 * 60 * 60 * 1000
-   })
+  createScheduler(app, {
+    interval: 7 * 24 * 60 * 60 * 1000
+  })
 
-   app.on('schedule.repository', async context => {
+  app.on('schedule.repository', async context => {
     const staleIssues = await fetchStaleIssues(context)
-    
+
     console.log(staleIssues)
-   })
+  })
 }
