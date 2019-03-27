@@ -68,8 +68,8 @@ function buildHtmlReportBody(issues) {
 
 function buildStaleIssueReportBody(issues) {
   return {
-    to: 'scanmurr@iu.edu',
-    from: 'no-reply@iu.edu',
+    to: process.env.RIVET_EMAIL,
+    from: process.env.NOREPLY_EMAIL,
     subject: 'Rivet stale issues - weekly report',
     text: buildPlaintextReportBody(issues),
     html: buildHtmlReportBody(issues)
