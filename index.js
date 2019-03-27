@@ -19,7 +19,7 @@ const postNotReproducibleCommentAndClose = require('./webhooks/issues.labeled/no
 const postOutOfScopeCommentAndClose = require('./webhooks/issues.labeled/out-of-scope')
 const postNoQuestionsCommentAndClose = require('./webhooks/issues.labeled/question')
 const postAcceptedFeatureRequestComment = require('./webhooks/issues.labeled/request')
-const fetchStaleIssues = require('./webhooks/schedule.repository/stale')
+const sendStaleIssuesReport = require('./webhooks/schedule.repository/stale')
 
 module.exports = app => {
 
@@ -93,8 +93,6 @@ module.exports = app => {
   })
 
   app.on('schedule.repository', async context => {
-    const staleIssues = await fetchStaleIssues(context)
-
-    console.log(staleIssues)
+    sendStaleIssuesReport(context)
   })
 }
