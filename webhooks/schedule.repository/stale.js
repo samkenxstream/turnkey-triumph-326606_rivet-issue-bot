@@ -15,7 +15,7 @@ const sendgrid = require('@sendgrid/mail')
 
 async function fetchStaleIssues(context) {
   const repo = context.payload.repository.full_name
-  const timestamp = getDatestamp30DaysAgo()
+  const timestamp = getPastDatestamp(process.env.STALE_ISSUE_DAYS_CUTOFF)
   const query = `repo:${repo} is:issue is:open updated:<${timestamp}`
   const issues = await context.github.search.issues({
     q: query,
@@ -31,13 +31,13 @@ async function fetchStaleIssues(context) {
 }
 
 /******************************************************************************
- * Gets the date stamp from 30 days ago in YYYY-MM-DD format.
+ * Gets the date stamp from some number of days ago in YYYY-MM-DD format.
  ******************************************************************************/
 
-function getDatestamp30DaysAgo() {
+function getPastDatestamp(daysAgo) {
   const date = new Date()
 
-  date.setDate(date.getDate() - 30)
+  date.setDate(date.getDate() - daysAgo)
 
   return date.toISOString().split('T')[0]
 }
