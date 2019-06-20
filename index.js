@@ -20,6 +20,7 @@ const postOutOfScopeCommentAndClose = require('./webhooks/issues.labeled/out-of-
 const postNoQuestionsCommentAndClose = require('./webhooks/issues.labeled/question')
 const postAcceptedFeatureRequestComment = require('./webhooks/issues.labeled/request')
 const sendStaleIssuesReport = require('./webhooks/schedule.repository/stale')
+const sendAnalyticsReport = require('./webhooks/schedule.repository/analytics')
 
 module.exports = app => {
 
