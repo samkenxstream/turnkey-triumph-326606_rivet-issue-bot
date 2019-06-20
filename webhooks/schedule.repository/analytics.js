@@ -236,6 +236,55 @@ async function fetchNumberOfIssuesClosed(context, quarter) {
 }
 
 /******************************************************************************
+ * Fetches the number of issues that were open at the start of the given
+ * quarter. This information isn't provided directly by the GitHub API, so
+ * this function works out how many issues were open by counting the number
+ * of issues with a creation date that predates the given quarter and a closed
+ * date after the previous quarter (or none at all if the issue is still open).
+ ******************************************************************************/
+
+async function fetchNumberOfOpenIssuesAtStartOfQuarter(context, quarter) {
+  const repo = context.payload.repository.full_name
+  const start = quarter.start
+  const query = `repo:${repo} is:issue created:<${start}`
+  const issues = await context.github.search.issues({
+    q: query,
+    sort: 'updated',
+    order: 'desc',
+    per_page: 1000 // maximum allowed by GitHub API
+  })
+
+  const openIssuesAtStartOfQuarter = issues.data.items.filter((issue) => {
+    if (issue.closed_at === null) {
+      return true
+    } else {
+      const closedDate = new Date(issue.closed_at)
+      const cutoffDate = new Date(quarter.start)
+
+      return closedDate.getTime() > cutoffDate.getTime()
+    }
+  })
+
+  const bugs = openIssuesAtStartOfQuarter.filter((issue) => {
+    const labels = issue.labels.map(l => l.name)
+
+    return labels.indexOf('bug :bug:') >= 0
+  })
+
+  const requests = openIssuesAtStartOfQuarter.filter((issue) => {
+    const labels = issue.labels.map(l => l.name)
+
+    return labels.indexOf('request') >= 0
+  })
+
+  return {
+    total: openIssuesAtStartOfQuarter.length,
+    bugs: bugs.length,
+    requests: requests.length
+  }
+}
+
+/******************************************************************************
  * Calculate the lifetime of a closed issue in days. This function is
  * pessimistic and rounds the time it takes to close an issue up to the
  * nearest whole day.
@@ -257,6 +306,7 @@ async function runReports(context, quarters) {
   await asyncForEach(quarters, async (quarter) => {
     let numberOfNewIssuesOpened = await fetchNumberOfNewIssuesOpened(context, quarter)
     let numberOfIssuesClosed = await fetchNumberOfIssuesClosed(context, quarter)
+    let numberOfOpenIssuesAtStartOfQuarter = await fetchNumberOfOpenIssuesAtStartOfQuarter(context, quarter)
     let timeToCloseBugReports = await fetchAverageTimeToCloseBugReport(context, quarter)
     let timeToCloseFeatureRequests = await fetchAverageTimeToCloseFeatureRequest(context, quarter)
 
@@ -264,6 +314,7 @@ async function runReports(context, quarters) {
       label: quarter.label,
       numberOfNewIssuesOpened: numberOfNewIssuesOpened,
       numberOfIssuesClosed: numberOfIssuesClosed,
+      numberOfOpenIssuesAtStartOfQuarter,
       timeToCloseBugReports: timeToCloseBugReports,
       timeToCloseFeatureRequests: timeToCloseFeatureRequests
     })
