@@ -45,6 +45,29 @@ async function fetchAverageTimeToCloseBugReport(context) {
 }
 
 /******************************************************************************
+ * Fetches the average time it's taken to close feature requests.
+ ******************************************************************************/
+
+async function fetchAverageTimeToCloseFeatureRequest(context) {
+  const repo = context.payload.repository.full_name
+  const query = `repo:${repo} is:issue is:closed label:"request"`
+  const issues = await context.github.search.issues({
+    q: query,
+    sort: 'updated',
+    order: 'desc',
+    per_page: 1000 // maximum allowed by GitHub API
+  })
+
+  const daysToClose = issues.data.items.map((issue) => {
+    return calculateIssueLifetime(issue)
+  })
+
+  const totalDaysToClose = daysToClose.reduce((total, days) => total + days, 0)
+
+  return Math.ceil(totalDaysToClose / daysToClose.length)
+}
+
+/******************************************************************************
  * Calculate the lifetime of a closed issue in days. This function is
  * pessimistic and rounds the time it takes to close an issue up to the
  * nearest whole day.
@@ -63,9 +86,11 @@ function calculateIssueLifetime(issue) {
 module.exports = async context => {
   const totalIssues = await fetchTotalLifetimeIssues(context)
   const averageTimeToCloseBugReport = await fetchAverageTimeToCloseBugReport(context)
+  const averageTimeToCloseFeatureRequest = await fetchAverageTimeToCloseFeatureRequest(context)
   
   return {
     totalIssues: totalIssues,
-    averageTimeToCloseBugReport: averageTimeToCloseBugReport
+    averageTimeToCloseBugReport: averageTimeToCloseBugReport,
+    averageTimeToCloseFeatureRequest: averageTimeToCloseFeatureRequest
   }
 }
