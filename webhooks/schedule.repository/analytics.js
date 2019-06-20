@@ -162,6 +162,43 @@ async function fetchAverageTimeToCloseFeatureRequest(context, quarter) {
 }
 
 /******************************************************************************
+ * Fetches the number of new issues opened during the given quarter. Returns
+ * an object that lists total new issues, total new bug reports, and total
+ * new feature requests.
+ ******************************************************************************/
+
+async function fetchNumberOfNewIssuesOpened(context, quarter) {
+  const repo = context.payload.repository.full_name
+  const start = quarter.start
+  const end = quarter.end
+  const query = `repo:${repo} is:issue created:${start}..${end}`
+  const issues = await context.github.search.issues({
+    q: query,
+    sort: 'updated',
+    order: 'desc',
+    per_page: 1000 // maximum allowed by GitHub API
+  })
+
+  const bugs = issues.data.items.filter((issue) => {
+    const labels = issue.labels.map(l => l.name)
+
+    return labels.indexOf('bug :bug:') >= 0
+  })
+
+  const requests = issues.data.items.filter((issue) => {
+    const labels = issue.labels.map(l => l.name)
+
+    return labels.indexOf('request') >= 0
+  })
+
+  return {
+    total: issues.data.items.length,
+    bugs: bugs.length,
+    requests: requests.length
+  }
+}
+
+/******************************************************************************
  * Calculate the lifetime of a closed issue in days. This function is
  * pessimistic and rounds the time it takes to close an issue up to the
  * nearest whole day.
@@ -181,11 +218,13 @@ async function runReports(context, quarters) {
   let reports = []
   
   await asyncForEach(quarters, async (quarter) => {
+    let numberOfNewIssuesOpened = await fetchNumberOfNewIssuesOpened(context, quarter)
     let timeToCloseBugReports = await fetchAverageTimeToCloseBugReport(context, quarter)
     let timeToCloseFeatureRequests = await fetchAverageTimeToCloseFeatureRequest(context, quarter)
 
     reports.push({
       label: quarter.label,
+      numberOfNewIssuesOpened: numberOfNewIssuesOpened,
       timeToCloseBugReports: timeToCloseBugReports,
       timeToCloseFeatureRequests: timeToCloseFeatureRequests
     })
