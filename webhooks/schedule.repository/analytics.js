@@ -5,6 +5,22 @@
  * Sends a report containing some useful metrics related to issues.
  */
 
+/******************************************************************************
+ * Fetches a count of all issues ever opened.
+ ******************************************************************************/
+
+async function fetchTotalLifetimeIssues(context) {
+  const repo = context.payload.repository.full_name
+  const query = `repo:${repo} is:issue`
+  const issues = await context.github.search.issues({
+    q: query
+  })
+
+  return issues.data.total_count
+}
+
 module.exports = async context => {
-  
+  return {
+    totalIssues: fetchTotalLifetimeIssues(context)
+  }
 }
