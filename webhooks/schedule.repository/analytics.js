@@ -5,7 +5,7 @@
  * Sends a report containing some useful metrics related to issues.
  */
 
-const { getPastDatestamp } = require('../common')
+const { asyncForEach } = require('../common')
 
 function getQuarterDateCutoffs() {
   const today     = new Date()
@@ -24,43 +24,43 @@ function getQuarterDateCutoffs() {
   const quarters = {
     q1LastYear: {
       label: `Q1 ${lastYear}`,
-      start: process.env.Q1_START + '-' + lastYear,
-      end: process.env.Q1_END + '-' + lastYear
+      start: lastYear + '-' + process.env.Q1_START,
+      end: lastYear + '-' + process.env.Q1_END
     },
     q2LastYear: {
       label: `Q2 ${lastYear}`,
-      start: process.env.Q2_START + '-' + lastYear,
-      end: process.env.Q2_END + '-' + lastYear
+      start: lastYear + '-' + process.env.Q2_START,
+      end: lastYear + '-' + process.env.Q2_END
     },
     q3LastYear: {
       label: `Q3 ${lastYear}`,
-      start: process.env.Q3_START + '-' + lastYear,
-      end: process.env.Q3_END + '-' + lastYear
+      start: lastYear + '-' + process.env.Q3_START,
+      end: lastYear + '-' + process.env.Q3_END
     },
     q4LastYear: {
       label: `Q4 ${lastYear}`,
-      start: process.env.Q4_START + '-' + lastYear,
-      end: process.env.Q4_END + '-' + lastYear
+      start: lastYear + '-' + process.env.Q4_START,
+      end: lastYear + '-' + process.env.Q4_END
     },
     q1ThisYear: {
       label: `Q1 ${thisYear}`,
-      start: process.env.Q1_START + '-' + thisYear,
-      end: process.env.Q1_END + '-' + thisYear
+      start: thisYear + '-' + process.env.Q1_START,
+      end: thisYear + '-' + process.env.Q1_END
     },
     q2ThisYear: {
       label: `Q2 ${thisYear}`,
-      start: process.env.Q2_START + '-' + thisYear,
-      end: process.env.Q2_END + '-' + thisYear
+      start: thisYear + '-' + process.env.Q2_START,
+      end: thisYear + '-' + process.env.Q2_END
     },
     q3ThisYear: {
       label: `Q3 ${thisYear}`,
-      start: process.env.Q3_START + '-' + thisYear,
-      end: process.env.Q3_END + '-' + thisYear
+      start: thisYear + '-' + process.env.Q3_START,
+      end: thisYear + '-' + process.env.Q3_END
     },
     q4ThisYear: {
       label: `Q4 ${thisYear}`,
-      start: process.env.Q4_START + '-' + thisYear,
-      end: process.env.Q4_END + '-' + thisYear
+      start: thisYear + '-' + process.env.Q4_START,
+      end: thisYear + '-' + process.env.Q4_END
     }
   }
 
@@ -110,12 +110,15 @@ async function fetchTotalLifetimeIssues(context) {
 }
 
 /******************************************************************************
- * Fetches the average time it's taken to close bug reports.
+ * Fetches the average time in days it took to close bug reports during the
+ * given quarter.
  ******************************************************************************/
 
-async function fetchAverageTimeToCloseBugReport(context) {
+async function fetchAverageTimeToCloseBugReport(context, quarter) {
   const repo = context.payload.repository.full_name
-  const query = `repo:${repo} is:issue is:closed label:"bug :bug:"`
+  const start = quarter.start
+  const end = quarter.end
+  const query = `repo:${repo} is:issue is:closed label:"bug :bug:" closed:${start}..${end}`
   const issues = await context.github.search.issues({
     q: query,
     sort: 'updated',
@@ -133,12 +136,15 @@ async function fetchAverageTimeToCloseBugReport(context) {
 }
 
 /******************************************************************************
- * Fetches the average time it's taken to close feature requests.
+ * Fetches the average time in days it took to close feature requests during
+ * the given quarter.
  ******************************************************************************/
 
-async function fetchAverageTimeToCloseFeatureRequest(context) {
+async function fetchAverageTimeToCloseFeatureRequest(context, quarter) {
   const repo = context.payload.repository.full_name
-  const query = `repo:${repo} is:issue is:closed label:"request"`
+  const start = quarter.start
+  const end = quarter.end
+  const query = `repo:${repo} is:issue is:closed label:"request" closed:${start}..${end}`
   const issues = await context.github.search.issues({
     q: query,
     sort: 'updated',
@@ -171,14 +177,30 @@ function calculateIssueLifetime(issue) {
   return diffDays
 }
 
-module.exports = async context => {
-  const totalIssues = await fetchTotalLifetimeIssues(context)
-  const averageTimeToCloseBugReport = await fetchAverageTimeToCloseBugReport(context)
-  const averageTimeToCloseFeatureRequest = await fetchAverageTimeToCloseFeatureRequest(context)
+async function runReports(context, quarters) {
+  let reports = []
   
+  await asyncForEach(quarters, async (quarter) => {
+    let timeToCloseBugReports = await fetchAverageTimeToCloseBugReport(context, quarter)
+    let timeToCloseFeatureRequests = await fetchAverageTimeToCloseFeatureRequest(context, quarter)
+
+    reports.push({
+      label: quarter.label,
+      timeToCloseBugReports: timeToCloseBugReports,
+      timeToCloseFeatureRequests: timeToCloseFeatureRequests
+    })
+  })
+
+  return reports
+}
+
+module.exports = async context => {
+  const quarters = getQuarterDateCutoffs()
+  const totalIssues = await fetchTotalLifetimeIssues(context)
+  const reports = await runReports(context, quarters)
+
   return {
     totalIssues: totalIssues,
-    averageTimeToCloseBugReport: averageTimeToCloseBugReport,
-    averageTimeToCloseFeatureRequest: averageTimeToCloseFeatureRequest
+    reports: reports
   }
 }

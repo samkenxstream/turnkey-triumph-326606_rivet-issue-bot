@@ -50,6 +50,16 @@ function getPastDatestamp(daysAgo) {
 }
 
 /******************************************************************************
+ * Async variant of Array.forEach.
+ ******************************************************************************/
+
+async function asyncForEach(array, callback) {
+  for (let index = 0; index < array.length; index++) {
+    await callback(array[index], index, array);
+  }
+}
+
+/******************************************************************************
  * Export common functions.
  *****************************************************************************/
 
@@ -57,5 +67,6 @@ module.exports = {
   mention,
   postIssueComment,
   closeIssue,
-  getPastDatestamp
+  getPastDatestamp,
+  asyncForEach
 }
