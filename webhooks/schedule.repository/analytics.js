@@ -5,6 +5,8 @@
  * Sends a report containing some useful metrics related to issues.
  */
 
+const { getPastDatestamp } = require('../common')
+
 /******************************************************************************
  * Fetches a count of all issues ever opened.
  ******************************************************************************/

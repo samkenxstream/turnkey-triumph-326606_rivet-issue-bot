@@ -6,6 +6,7 @@
  * 30 days or more.
  */
 
+const { getPastDatestamp } = require('../common')
 const sendgrid = require('@sendgrid/mail')
 
 /******************************************************************************
@@ -28,18 +29,6 @@ async function fetchStaleIssues(context) {
     title: issue.title,
     url: issue.html_url
   }))
-}
-
-/******************************************************************************
- * Gets the date stamp from some number of days ago in YYYY-MM-DD format.
- ******************************************************************************/
-
-function getPastDatestamp(daysAgo) {
-  const date = new Date()
-
-  date.setDate(date.getDate() - daysAgo)
-
-  return date.toISOString().split('T')[0]
 }
 
 /******************************************************************************

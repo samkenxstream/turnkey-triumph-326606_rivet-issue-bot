@@ -38,11 +38,24 @@ function closeIssue(context) {
 }
 
 /******************************************************************************
+ * Gets the date stamp from some number of days ago in YYYY-MM-DD format.
+ ******************************************************************************/
+
+function getPastDatestamp(daysAgo) {
+  const date = new Date()
+
+  date.setDate(date.getDate() - daysAgo)
+
+  return date.toISOString().split('T')[0]
+}
+
+/******************************************************************************
  * Export common functions.
  *****************************************************************************/
 
 module.exports = {
   mention,
   postIssueComment,
-  closeIssue
+  closeIssue,
+  getPastDatestamp
 }
