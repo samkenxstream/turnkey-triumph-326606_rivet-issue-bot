@@ -7,6 +7,94 @@
 
 const { getPastDatestamp } = require('../common')
 
+function getQuarterDateCutoffs() {
+  const today     = new Date()
+  const thisYear  = today.getFullYear()
+  const lastYear  = thisYear - 1
+  const nowMs     = today.getTime()
+  const q1        = new Date(process.env.Q1_END + '-' + thisYear)
+  const q2        = new Date(process.env.Q2_END + '-' + thisYear)
+  const q3        = new Date(process.env.Q3_END + '-' + thisYear)
+  const q4        = new Date(process.env.Q4_END + '-' + thisYear)
+  const q1Ms      = q1.getTime()
+  const q2Ms      = q2.getTime()
+  const q3Ms      = q3.getTime()
+  const q4Ms      = q4.getTime()
+
+  const quarters = {
+    q1LastYear: {
+      label: `Q1 ${lastYear}`,
+      start: process.env.Q1_START + '-' + lastYear,
+      end: process.env.Q1_END + '-' + lastYear
+    },
+    q2LastYear: {
+      label: `Q2 ${lastYear}`,
+      start: process.env.Q2_START + '-' + lastYear,
+      end: process.env.Q2_END + '-' + lastYear
+    },
+    q3LastYear: {
+      label: `Q3 ${lastYear}`,
+      start: process.env.Q3_START + '-' + lastYear,
+      end: process.env.Q3_END + '-' + lastYear
+    },
+    q4LastYear: {
+      label: `Q4 ${lastYear}`,
+      start: process.env.Q4_START + '-' + lastYear,
+      end: process.env.Q4_END + '-' + lastYear
+    },
+    q1ThisYear: {
+      label: `Q1 ${thisYear}`,
+      start: process.env.Q1_START + '-' + thisYear,
+      end: process.env.Q1_END + '-' + thisYear
+    },
+    q2ThisYear: {
+      label: `Q2 ${thisYear}`,
+      start: process.env.Q2_START + '-' + thisYear,
+      end: process.env.Q2_END + '-' + thisYear
+    },
+    q3ThisYear: {
+      label: `Q3 ${thisYear}`,
+      start: process.env.Q3_START + '-' + thisYear,
+      end: process.env.Q3_END + '-' + thisYear
+    },
+    q4ThisYear: {
+      label: `Q4 ${thisYear}`,
+      start: process.env.Q4_START + '-' + thisYear,
+      end: process.env.Q4_END + '-' + thisYear
+    }
+  }
+
+  if (nowMs <= q1Ms) {
+    return [
+      quarters.q1LastYear,
+      quarters.q2LastYear,
+      quarters.q3LastYear,
+      quarters.q4LastYear,
+    ]
+  } else if (nowMs <= q2Ms) {
+    return [
+      quarters.q2LastYear,
+      quarters.q3LastYear,
+      quarters.q4LastYear,
+      quarters.q1ThisYear,
+    ]
+  } else if (nowMs <= q3Ms) {
+    return [
+      quarters.q3LastYear,
+      quarters.q4LastYear,
+      quarters.q1ThisYear,
+      quarters.q2ThisYear,
+    ]
+  } else {
+    return [
+      quarters.q4LastYear,
+      quarters.q1ThisYear,
+      quarters.q2ThisYear,
+      quarters.q3ThisYear,
+    ]
+  }
+}
+
 /******************************************************************************
  * Fetches a count of all issues ever opened.
  ******************************************************************************/
