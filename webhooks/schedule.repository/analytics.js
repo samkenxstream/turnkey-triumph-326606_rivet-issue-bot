@@ -20,7 +20,9 @@ async function fetchTotalLifetimeIssues(context) {
 }
 
 module.exports = async context => {
+  const totalIssues = await fetchTotalLifetimeIssues(context)
+  
   return {
-    totalIssues: fetchTotalLifetimeIssues(context)
+    totalIssues: totalIssues
   }
 }
