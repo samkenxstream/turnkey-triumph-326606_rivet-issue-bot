@@ -300,6 +300,11 @@ function calculateIssueLifetime(issue) {
   return diffDays
 }
 
+/******************************************************************************
+ * Runs the various analytics reports. Uses an async variant of Array.forEach
+ * to step through each quarter that should have reports run.
+ ******************************************************************************/
+
 async function runReports(context, quarters) {
   let reports = []
   
