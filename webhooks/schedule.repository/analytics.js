@@ -15,7 +15,6 @@ function getQuarterDateCutoffs() {
   const q1        = new Date(process.env.Q1_END + '-' + thisYear)
   const q2        = new Date(process.env.Q2_END + '-' + thisYear)
   const q3        = new Date(process.env.Q3_END + '-' + thisYear)
-  const q4        = new Date(process.env.Q4_END + '-' + thisYear)
   const q1Ms      = q1.getTime()
   const q2Ms      = q2.getTime()
   const q3Ms      = q3.getTime()
