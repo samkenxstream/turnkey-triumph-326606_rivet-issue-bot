@@ -19,7 +19,6 @@ function getQuarterDateCutoffs() {
   const q1Ms      = q1.getTime()
   const q2Ms      = q2.getTime()
   const q3Ms      = q3.getTime()
-  const q4Ms      = q4.getTime()
 
   const quarters = {
     q1LastYear: {
