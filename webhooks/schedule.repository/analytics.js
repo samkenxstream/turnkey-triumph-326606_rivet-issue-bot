@@ -96,7 +96,8 @@ async function fetchAverageTimeToCloseBugReport(context, quarter) {
   const repo = context.payload.repository.full_name
   const start = quarter.start
   const end = quarter.end
-  const query = `repo:${repo} is:issue is:closed label:"bug :bug:" closed:${start}..${end}`
+  const label = process.env.BUG_LABEL
+  const query = `repo:${repo} is:issue is:closed label:"${label}" closed:${start}..${end}`
   const issues = await context.github.search.issues({
     q: query,
     sort: 'updated',
@@ -122,7 +123,8 @@ async function fetchAverageTimeToCloseFeatureRequest(context, quarter) {
   const repo = context.payload.repository.full_name
   const start = quarter.start
   const end = quarter.end
-  const query = `repo:${repo} is:issue is:closed label:"request" closed:${start}..${end}`
+  const label = process.env.FEATURE_REQUEST_LABEL
+  const query = `repo:${repo} is:issue is:closed label:"${label}" closed:${start}..${end}`
   const issues = await context.github.search.issues({
     q: query,
     sort: 'updated',
@@ -159,14 +161,16 @@ async function fetchNumberOfNewIssuesOpened(context, quarter) {
 
   const bugs = issues.data.items.filter((issue) => {
     const labels = issue.labels.map(l => l.name)
+    const bugLabel = process.env.BUG_LABEL
 
-    return labels.indexOf('bug :bug:') >= 0
+    return labels.indexOf(bugLabel) >= 0
   })
 
   const requests = issues.data.items.filter((issue) => {
     const labels = issue.labels.map(l => l.name)
+    const requestLabel = process.env.FEATURE_REQUEST_LABEL
 
-    return labels.indexOf('request') >= 0
+    return labels.indexOf(requestLabel) >= 0
   })
 
   return {
@@ -196,14 +200,16 @@ async function fetchNumberOfIssuesClosed(context, quarter) {
 
   const bugs = issues.data.items.filter((issue) => {
     const labels = issue.labels.map(l => l.name)
+    const bugLabel = process.env.BUG_LABEL
 
-    return labels.indexOf('bug :bug:') >= 0
+    return labels.indexOf(bugLabel) >= 0
   })
 
   const requests = issues.data.items.filter((issue) => {
     const labels = issue.labels.map(l => l.name)
+    const requestLabel = process.env.FEATURE_REQUEST_LABEL
 
-    return labels.indexOf('request') >= 0
+    return labels.indexOf(requestLabel) >= 0
   })
 
   return {
@@ -245,14 +251,16 @@ async function fetchNumberOfOpenIssuesAtStartOfQuarter(context, quarter) {
 
   const bugs = openIssuesAtStartOfQuarter.filter((issue) => {
     const labels = issue.labels.map(l => l.name)
+    const bugLabel = process.env.BUG_LABEL
 
-    return labels.indexOf('bug :bug:') >= 0
+    return labels.indexOf(bugLabel) >= 0
   })
 
   const requests = openIssuesAtStartOfQuarter.filter((issue) => {
     const labels = issue.labels.map(l => l.name)
+    const requestLabel = process.env.FEATURE_REQUEST_LABEL
 
-    return labels.indexOf('request') >= 0
+    return labels.indexOf(requestLabel) >= 0
   })
 
   return {

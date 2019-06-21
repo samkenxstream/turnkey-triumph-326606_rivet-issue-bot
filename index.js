@@ -53,7 +53,7 @@ module.exports = app => {
       case 'as designed':
         postAsDesignedCommentAndClose(context, dialogue.asDesigned)
         break
-      case 'bug :bug:':
+      case process.env.BUG_LABEL:
         postVerifiedBugComment(context, dialogue.bug)
         break
       case 'discussion :question:':
@@ -77,7 +77,7 @@ module.exports = app => {
       case 'question':
         postNoQuestionsCommentAndClose(context, dialogue.question)
         break
-      case 'request':
+      case process.env.FEATURE_REQUEST_LABEL:
         postAcceptedFeatureRequestComment(context, dialogue.request)
         break
       default:
