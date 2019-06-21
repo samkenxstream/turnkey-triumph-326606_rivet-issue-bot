@@ -250,12 +250,7 @@ function calculateIssueLifetime(issue) {
  ******************************************************************************/
 
 function bugReportsOnly(issues) {
-  return issues.filter((issue) => {
-    const labels = issue.labels.map(l => l.name)
-    const bugLabel = process.env.BUG_LABEL
-
-    return labels.indexOf(bugLabel) >= 0
-  })
+  return filterIssuesByLabel(issues, process.env.BUG_LABEL)
 }
 
 /******************************************************************************
@@ -264,11 +259,19 @@ function bugReportsOnly(issues) {
  ******************************************************************************/
 
 function featureRequestsOnly(issues) {
+  return filterIssuesByLabel(issues, process.env.FEATURE_REQUEST_LABEL)
+}
+
+/******************************************************************************
+ * Takes an array of issues fetched from the GitHub API and filters it down
+ * to those with the given label.
+ ******************************************************************************/
+
+function filterIssuesByLabel(issues, label) {
   return issues.filter((issue) => {
     const labels = issue.labels.map(l => l.name)
-    const requestLabel = process.env.FEATURE_REQUEST_LABEL
 
-    return labels.indexOf(requestLabel) >= 0
+    return labels.indexOf(label) >= 0
   })
 }
 
