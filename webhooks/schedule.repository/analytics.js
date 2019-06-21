@@ -20,77 +20,57 @@ function getQuarterDateCutoffs() {
   const q2Ms      = q2.getTime()
   const q3Ms      = q3.getTime()
 
-  const quarters = {
-    q1LastYear: {
+  const quarters = [
+    {
       label: `Q1 ${lastYear}`,
       start: lastYear + '-' + process.env.Q1_START,
       end: lastYear + '-' + process.env.Q1_END
     },
-    q2LastYear: {
+    {
       label: `Q2 ${lastYear}`,
       start: lastYear + '-' + process.env.Q2_START,
       end: lastYear + '-' + process.env.Q2_END
     },
-    q3LastYear: {
+    {
       label: `Q3 ${lastYear}`,
       start: lastYear + '-' + process.env.Q3_START,
       end: lastYear + '-' + process.env.Q3_END
     },
-    q4LastYear: {
+    {
       label: `Q4 ${lastYear}`,
       start: lastYear + '-' + process.env.Q4_START,
       end: lastYear + '-' + process.env.Q4_END
     },
-    q1ThisYear: {
+    {
       label: `Q1 ${thisYear}`,
       start: thisYear + '-' + process.env.Q1_START,
       end: thisYear + '-' + process.env.Q1_END
     },
-    q2ThisYear: {
+    {
       label: `Q2 ${thisYear}`,
       start: thisYear + '-' + process.env.Q2_START,
       end: thisYear + '-' + process.env.Q2_END
     },
-    q3ThisYear: {
+    {
       label: `Q3 ${thisYear}`,
       start: thisYear + '-' + process.env.Q3_START,
       end: thisYear + '-' + process.env.Q3_END
     },
-    q4ThisYear: {
+    {
       label: `Q4 ${thisYear}`,
       start: thisYear + '-' + process.env.Q4_START,
       end: thisYear + '-' + process.env.Q4_END
     }
-  }
+  ]
 
   if (nowMs <= q1Ms) {
-    return [
-      quarters.q1LastYear,
-      quarters.q2LastYear,
-      quarters.q3LastYear,
-      quarters.q4LastYear,
-    ]
+    return quarters.slice(0, 5)
   } else if (nowMs <= q2Ms) {
-    return [
-      quarters.q2LastYear,
-      quarters.q3LastYear,
-      quarters.q4LastYear,
-      quarters.q1ThisYear,
-    ]
+    return quarters.slice(1, 6)
   } else if (nowMs <= q3Ms) {
-    return [
-      quarters.q3LastYear,
-      quarters.q4LastYear,
-      quarters.q1ThisYear,
-      quarters.q2ThisYear,
-    ]
+    return quarters.slice(2, 7)
   } else {
-    return [
-      quarters.q4LastYear,
-      quarters.q1ThisYear,
-      quarters.q2ThisYear,
-      quarters.q3ThisYear,
-    ]
+    return quarters.slice(3, 8)
   }
 }
 
