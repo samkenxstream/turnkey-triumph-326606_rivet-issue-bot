@@ -159,17 +159,10 @@ async function fetchNumberOfNewIssuesOpened(context, quarter) {
     per_page: 1000 // maximum allowed by GitHub API
   })
 
-  const requests = issues.data.items.filter((issue) => {
-    const labels = issue.labels.map(l => l.name)
-    const requestLabel = process.env.FEATURE_REQUEST_LABEL
-
-    return labels.indexOf(requestLabel) >= 0
-  })
-
   return {
     total: issues.data.items.length,
     bugs: bugReportsOnly(issues.data.items).length,
-    requests: requests.length
+    requests: featureRequestsOnly(issues.data.items)
   }
 }
 
@@ -191,17 +184,10 @@ async function fetchNumberOfIssuesClosed(context, quarter) {
     per_page: 1000 // maximum allowed by GitHub API
   })
 
-  const requests = issues.data.items.filter((issue) => {
-    const labels = issue.labels.map(l => l.name)
-    const requestLabel = process.env.FEATURE_REQUEST_LABEL
-
-    return labels.indexOf(requestLabel) >= 0
-  })
-
   return {
     total: issues.data.items.length,
     bugs: bugReportsOnly(issues.data.items).length,
-    requests: requests.length
+    requests: featureRequestsOnly(issues.data.items).length
   }
 }
 
@@ -235,17 +221,10 @@ async function fetchNumberOfOpenIssuesAtStartOfQuarter(context, quarter) {
     }
   })
 
-  const requests = openIssuesAtStartOfQuarter.filter((issue) => {
-    const labels = issue.labels.map(l => l.name)
-    const requestLabel = process.env.FEATURE_REQUEST_LABEL
-
-    return labels.indexOf(requestLabel) >= 0
-  })
-
   return {
     total: openIssuesAtStartOfQuarter.length,
     bugs: bugReportsOnly(openIssuesAtStartOfQuarter).length,
-    requests: requests.length
+    requests: featureRequestsOnly(openIssuesAtStartOfQuarter).length
   }
 }
 
@@ -276,6 +255,20 @@ function bugReportsOnly(issues) {
     const bugLabel = process.env.BUG_LABEL
 
     return labels.indexOf(bugLabel) >= 0
+  })
+}
+
+/******************************************************************************
+ * Takes an array of issues fetched from the GitHub API and filters it down
+ * to feature requests only.
+ ******************************************************************************/
+
+function featureRequestsOnly(issues) {
+  return issues.filter((issue) => {
+    const labels = issue.labels.map(l => l.name)
+    const requestLabel = process.env.FEATURE_REQUEST_LABEL
+
+    return labels.indexOf(requestLabel) >= 0
   })
 }
 
