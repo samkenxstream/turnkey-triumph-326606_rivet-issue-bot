@@ -159,13 +159,6 @@ async function fetchNumberOfNewIssuesOpened(context, quarter) {
     per_page: 1000 // maximum allowed by GitHub API
   })
 
-  const bugs = issues.data.items.filter((issue) => {
-    const labels = issue.labels.map(l => l.name)
-    const bugLabel = process.env.BUG_LABEL
-
-    return labels.indexOf(bugLabel) >= 0
-  })
-
   const requests = issues.data.items.filter((issue) => {
     const labels = issue.labels.map(l => l.name)
     const requestLabel = process.env.FEATURE_REQUEST_LABEL
@@ -175,7 +168,7 @@ async function fetchNumberOfNewIssuesOpened(context, quarter) {
 
   return {
     total: issues.data.items.length,
-    bugs: bugs.length,
+    bugs: bugReportsOnly(issues.data.items).length,
     requests: requests.length
   }
 }
@@ -198,13 +191,6 @@ async function fetchNumberOfIssuesClosed(context, quarter) {
     per_page: 1000 // maximum allowed by GitHub API
   })
 
-  const bugs = issues.data.items.filter((issue) => {
-    const labels = issue.labels.map(l => l.name)
-    const bugLabel = process.env.BUG_LABEL
-
-    return labels.indexOf(bugLabel) >= 0
-  })
-
   const requests = issues.data.items.filter((issue) => {
     const labels = issue.labels.map(l => l.name)
     const requestLabel = process.env.FEATURE_REQUEST_LABEL
@@ -214,7 +200,7 @@ async function fetchNumberOfIssuesClosed(context, quarter) {
 
   return {
     total: issues.data.items.length,
-    bugs: bugs.length,
+    bugs: bugReportsOnly(issues.data.items).length,
     requests: requests.length
   }
 }
@@ -249,13 +235,6 @@ async function fetchNumberOfOpenIssuesAtStartOfQuarter(context, quarter) {
     }
   })
 
-  const bugs = openIssuesAtStartOfQuarter.filter((issue) => {
-    const labels = issue.labels.map(l => l.name)
-    const bugLabel = process.env.BUG_LABEL
-
-    return labels.indexOf(bugLabel) >= 0
-  })
-
   const requests = openIssuesAtStartOfQuarter.filter((issue) => {
     const labels = issue.labels.map(l => l.name)
     const requestLabel = process.env.FEATURE_REQUEST_LABEL
@@ -265,7 +244,7 @@ async function fetchNumberOfOpenIssuesAtStartOfQuarter(context, quarter) {
 
   return {
     total: openIssuesAtStartOfQuarter.length,
-    bugs: bugs.length,
+    bugs: bugReportsOnly(openIssuesAtStartOfQuarter).length,
     requests: requests.length
   }
 }
@@ -284,6 +263,20 @@ function calculateIssueLifetime(issue) {
   const diffDays = Math.ceil(diffMs / dayMs)
 
   return diffDays
+}
+
+/******************************************************************************
+ * Takes an array of issues fetched from the GitHub API and filters it down
+ * to bug reports only.
+ ******************************************************************************/
+
+function bugReportsOnly(issues) {
+  return issues.filter((issue) => {
+    const labels = issue.labels.map(l => l.name)
+    const bugLabel = process.env.BUG_LABEL
+
+    return labels.indexOf(bugLabel) >= 0
+  })
 }
 
 /******************************************************************************
