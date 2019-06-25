@@ -13,5 +13,5 @@ COPY index.js /usr/src/app/
 COPY app.yml dialogue.yml /usr/src/app/
 COPY webhooks /usr/src/app/webhooks/
 
-RUN npm start
+CMD npm start
 EXPOSE 3000
